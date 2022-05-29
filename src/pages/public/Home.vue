@@ -8,7 +8,7 @@ div.backgroundLayerStrong {
   opacity: 70%;
 }
 div.backgroundLayerWithPosition {
-  position: fixed;
+  position: absolute;
   bottom: 800px;
   right: 1500px;
   background-color: white;
