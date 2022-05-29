@@ -1,7 +1,25 @@
 <style>
+div.backgroundLayer {
+  background-color: white;
+  opacity: 50%;
+}
+div.backgroundLayerStrong {
+  background-color: white;
+  opacity: 70%;
+}
+div.backgroundLayerWithPosition {
+  position: fixed;
+  bottom: 800px;
+  right: 1500px;
+  background-color: white;
+  opacity: 90%;
+}
 .body {
-  height: 2560px;
-  width: 1440px;
+  max-width: 2560px;
+  max-height: 1440px;
+  min-height: 1440px;
+  min-width: 2560px;
+  overflow: auto;
 }
 .center {
   background-color: white;
@@ -13,72 +31,200 @@
 }
 .img {
   background-color: blue;
+  max-width: 2560px;
+  max-height: 1440px;
+  min-height: 1440px;
+  min-width: 2560px;
+  overflow: auto;
+}
+.v-main {
+  max-width: 2560px;
+  max-height: 1440px;
+  min-height: 1440px;
+  min-width: 2560px;
+  overflow: auto;
+  background-size: cover;
+}
+.v-label {
+  color: darksalmon;
+  min-width: 1000px;
+}
+div.normalText {
+  background-color: white;
+  opacity: 50%;
+  font-size: 20px;
+  color: black;
+}
+div.bigText {
+  background-color: white;
+  color: black;
+  font-size: 40px;
+}
+div.outbidDiv {
+  background-color: white;
+  opacity: 50%;
+  font-size: 20px;
+  color: red;
+}
+div.winningBidDiv {
+  background-color: white;
+  opacity: 50%;
+  font-size: 20px;
+  color: green;
+}
+div.activeBidDiv {
+  background-color: white;
+  opacity: 30%;
+  font-size: 20px;
+  color: gray;
 }
 </style>
 <template>
   <body>
-    <v-main class="overflow-hidden">
-      <app-bar @OnAdd="loadProperties"></app-bar>
-      <v-toolbar dense elevation="4" flat outlined>
-        <v-toolbar-items>
-          <v-label height="100" width="100" :color="'red'">
-            Outbids: {{ outbid }} | Outbid $$ Value: ${{ outbidValue }}<br />
-            Active Bids: {{ activebid }} | Active Bid $$ Value: ${{
-              activebidValue
-            }}
-            <br />
-            Winning Bids: {{ winbid }} | Winning Bid $$ Value: ${{
-              winbidValue
-            }}
-          </v-label>
-        </v-toolbar-items>
-      </v-toolbar>
-      <v-container>
-        <v-slide-group
-          v-model="model"
-          class="pa-4"
-          mandatory
-          show-arrows
-          center-active
-        >
-          <v-slide-item
-            v-for="(property, n) in properties"
-            :key="n"
-            v-slot="{ active, toggle }"
+    <v-main v-bind:style="{ backgroundImage: 'url(' + imageSource + ')' }">
+      <v-row
+        class="backgroundLayerStrong"
+        width="1800"
+        align="center"
+        justify="left"
+      >
+        <v-col align="center" justify="center" cols="7" md="1" width="255">
+          <v-img
+            max-width="180"
+            max-height="125"
+            contain
+            src="../../assets/docs.svg"
+          ></v-img>
+        </v-col>
+        <v-spacer />
+        <v-col align="center" justify="center" cols="7" md="2" min-width="255">
+          <div class="normalText">Own</div>
+          <div class="bigText">{{ currentStreet }}</div>
+          <div class="normalText">{{ currentCity }}</div>
+        </v-col>
+        <v-spacer />
+        <v-col align="center" justify="center" cols="7" md="1" min-width="255">
+          <v-img
+            max-width="180"
+            max-height="125"
+            contain
+            src="../../assets/map.svg"
+          ></v-img>
+        </v-col>
+        <v-spacer />
+        <v-col align="center" justify="center" cols="7" md="1" min-width="255">
+          <div class="normalText">To</div>
+          <div class="bigText">START</div>
+          <div class="normalText">Place Bid</div>
+        </v-col>
+        <v-spacer />
+        <v-col align="center" justify="center" cols="7" md="1" min-width="255">
+          <v-img
+            max-width="180"
+            max-height="125"
+            contain
+            src="../../assets/bookmark.webp"
+          ></v-img>
+        </v-col>
+        <v-spacer />
+        <v-col align="center" justify="center" cols="7" md="2" min-width="255">
+          <div class="normalText">Market Value ${{ propertyPriceDetails }}</div>
+          <div class="bigText">${{ minReservationPrice }}</div>
+          <div class="normalText">Reserve Price</div>
+        </v-col>
+        <v-spacer />
+        <v-col align="center" justify="center" cols="7" md="1" min-width="255">
+          <v-img
+            max-width="180"
+            max-height="125"
+            contain
+            src="../../assets/home.png"
+          ></v-img>
+        </v-col>
+        <v-spacer />
+      </v-row>
+      <v-row class="backgroundLayer" width="1800" align="center" justify="left">
+        <v-col align="center" justify="center" cols="7" md="1">
+          <div>Outbid:</div>
+          <div class="outbidDiv">{{ outbid }}</div>
+        </v-col>
+        <v-col align="center" justify="center" cols="7" md="1">
+          <div>Active:</div>
+          <div class="activeBidDiv">{{ activebid }}</div>
+        </v-col>
+        <v-col align="center" justify="center" cols="7" md="1">
+          <div>Winning:</div>
+          <div class="winningBidDiv">{{ winbid }}</div>
+        </v-col>
+        <v-col align="center" justify="center" cols="7" md="6">
+          <v-spacer />
+          <v-slide-group
+            v-model="model"
+            class="pa-4"
+            mandatory
+            show-arrows
+            center-active
           >
-            <v-card
-              :color="active ? 'primary' : 'grey lighten-1'"
-              class="ma-4"
-              height="100"
-              width="200"
-              v-on:click="loadImage(property)"
-              @click="toggle"
+            <v-slide-item
+              v-for="(property, n) in properties"
+              :key="n"
+              v-slot="{ active, toggle }"
             >
-              {{ property.streetName }}
-              <br />
-              Max Bid: ${{ property.maxBid }}
-              <br />
-              Last Bid: ${{ property.lastBid }}
-              <v-row class="fill-height" align="center" justify="center">
-                <v-scale-transition>
-                  <v-icon
-                    v-if="active"
-                    color="white"
-                    v-text="'mdi-close-circle-outline'"
-                  ></v-icon>
-                </v-scale-transition>
-              </v-row>
-            </v-card>
-          </v-slide-item>
-        </v-slide-group>
-        <div v-if="imageSource">
-          <img height="1440" width="2560" v-bind:src="imageSource" />
-          <div class="center">
-            {{ currentAddress }} <br />
-            ${{ propertyPriceDetails }}
-          </div>
-        </div>
-      </v-container>
+              <v-btn
+                :color="active ? 'primary' : 'black lighten-1'"
+                text
+                class="ma-4"
+                height="10"
+                width="200"
+                v-on:click="loadImage(property)"
+                @click="toggle"
+              >
+                {{ property.streetName }}
+                <br />
+                ${{ property.maxBid }} ${{ property.lastBid }}
+                <v-row align="center" justify="center">
+                  <v-scale-transition>
+                    <v-icon
+                      v-if="active"
+                      color="white"
+                      v-text="'mdi-close-circle-outline'"
+                    ></v-icon>
+                  </v-scale-transition>
+                </v-row>
+              </v-btn>
+            </v-slide-item>
+          </v-slide-group>
+        </v-col>
+        <v-spacer></v-spacer>
+        <v-col align="center" justify="center" cols="7" md="1">
+          <div>Winning:</div>
+          <div class="winningBidDiv">${{ winbidValue }}</div>
+        </v-col>
+        <v-col align="center" justify="center" cols="7" md="1">
+          <div>Active:</div>
+          <div class="activeBidDiv">${{ activebidValue }}</div>
+        </v-col>
+        <v-col align="center" justify="center" cols="7" md="1">
+          <div>Outbid:</div>
+          <div class="outbidDiv">${{ outbidValue }}</div>
+        </v-col>
+      </v-row>
+      <v-card
+        class="backgroundLayerWithPosition"
+        align="center"
+        elevation="2"
+        outlined
+        shaped
+        height="200"
+        width="300"
+      >
+        <div class="normalText">Market Value: ${{ propertyPriceDetails }}</div>
+        <div class="normalText">{{ currentStreet }}</div>
+        <div class="normalText">{{ currentCity }}</div>
+        <div class="normalText">
+          Reserve Bid: ${{ minReservationPrice }}
+        </div></v-card
+      >
     </v-main>
   </body>
 </template>
@@ -96,6 +242,8 @@ export default {
     imageSource:
       'https://images.unsplash.com/photo-1549286942-e6b84b2db18d?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471',
     currentAddress: 'n/a',
+    currentStreet: 'n/a',
+    currentCity: 'n/a',
     outbid: 0,
     winbid: 0,
     activebid: 0,
@@ -103,6 +251,7 @@ export default {
     winbidValue: 0,
     activebidValue: 0,
     propertyPriceDetails: 0,
+    minReservationPrice: 0,
   }),
   created() {
     this.loadProperties()
@@ -110,6 +259,7 @@ export default {
   },
   methods: {
     loadProperties() {
+      window.innerWidth
       this.loading = true
       TasksApi.getproperties().then((response) => {
         this.properties = response
@@ -137,7 +287,10 @@ export default {
       this.imageSource = propertyItem.imageSource
       this.currentAddress =
         propertyItem.streetName + ` ` + propertyItem.cityStateName
+      this.currentCity = propertyItem.cityStateName
+      this.currentStreet = propertyItem.streetName
       this.propertyPriceDetails = propertyItem.propertyPrice
+      this.minReservationPrice = propertyItem.minReservationPrice
     },
     mapBidsToVariables() {
       this.outbid = this.bids.losingBids

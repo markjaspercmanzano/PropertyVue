@@ -1,18 +1,24 @@
 <script>
-import Footer from '@/components/Footer.vue'
 export default {
   data: () => ({}),
-  components: {
-    Footer,
-  },
+  components: {},
 }
 </script>
 
-<style></style>
+<style>
+.v-main {
+  max-width: 2560px;
+  max-height: 1440px;
+  min-height: 1440px;
+  min-width: 2560px;
+  height: 1440px;
+  width: 2560px;
+  overflow: auto;
+}
+</style>
 
 <template>
   <v-main>
     <router-view />
-    <Footer />
   </v-main>
 </template>
